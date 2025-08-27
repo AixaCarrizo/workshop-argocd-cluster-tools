@@ -1,0 +1,113 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: test-dev
+  namespace: argocd
+  # Finalizer that ensures that project is not deleted until it is not referenced by any application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Project for the dev Cluster
+
+  # roles:
+  # # A role which provides read-only access to all applications in the project
+  # - name: read-only-dev
+  #   description: Privileges to dev resources
+  #   policies:
+  #   - p, proj:test-dev:read-only-dev, applications, get, test-dev/*, allow
+  #   - p, proj:test-dev:read-only-dev, applications, list, test-dev/*, allow
+  #   groups:
+  #   - example-group@client.com
+  # - name: full-access-dev
+  #   description: Privileges to dev resources
+  #   policies:
+  #   - p, proj:test-dev:full-access-dev, applications, *, test-dev/*, allow
+  #   - p, proj:test-dev:full-access-dev, clusters, *, test-dev/*, allow
+  #   - p, proj:test-dev:full-access-dev, repositories, *, test-dev/*, allow
+  #   groups: 
+  #   - example-group@client.com
+  # Allow manifests to deploy from any Git repos
+  sourceRepos:
+  - '*'
+  # Only permit applications to deploy to the guestbook namespace in the same cluster
+  destinations:
+  - namespace: '*'
+    server: test-dev
+  # Deny all cluster-scoped resources from being created, except for this list
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
+  - group: '*'
+    kind: ClusterRoleBinding
+  - group: '*'
+    kind: ClusterRole
+  - group: '*'
+    kind: CustomResourceDefinition
+  - group: '*'
+    kind: IngressClass
+  - group: '*'
+    kind: ClusterSecretStore
+  - group: '*'
+    kind: PersistentVolume
+  - group: '*'
+    kind: IngressClassParams
+  - group: '*'
+    kind: MutatingWebhookConfiguration
+  - group: '*'
+    kind: ValidatingWebhookConfiguration
+       
+  namespaceResourceWhitelist:
+  - group: 'argoproj.io'
+    kind: Application
+  - group: 'argoproj.io'
+    kind: AppProject
+  - group: 'argoproj.io'
+    kind: ApplicationSet
+  - group: '*'
+    kind: ConfigMap
+  - group: '*'
+    kind: Secret
+  - group: '*'
+    kind: ServiceAccount
+  - group: '*'
+    kind: Role
+  - group: '*'
+    kind: RoleBinding
+  - group: '*'
+    kind: Service
+  - group: '*'
+    kind: Deployment
+  - group: '*'
+    kind: CronJob
+  - group: '*'
+    kind: Ingress
+  - group: '*'
+    kind: HorizontalPodAutoscaler
+  - group: '*'
+    kind: ConfigMap
+  - group: '*'
+    kind: ExternalSecret
+  - group: '*'
+    kind: StatefulSet
+  - group: '*'
+    kind: Job
+  - group: '*'
+    kind: PersistentVolumeClaim
+  - group: '*'
+    kind: PodDisruptionBudget
+  - group: '*'
+    kind: ScaledObject
+  - group: '*'
+    kind: VerticalPodAutoscaler
+  - group: '*'
+    kind: DaemonSet
+  - group: '*'
+    kind: ServiceMonitor  
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ResourceQuota
+  - group: ''
+    kind: LimitRange
+  - group: ''
+    kind: NetworkPolicy

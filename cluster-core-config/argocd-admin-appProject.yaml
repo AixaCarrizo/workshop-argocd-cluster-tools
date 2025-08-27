@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: test-argocd-admin
+  namespace: argocd
+  # Finalizer that ensures that project is not deleted until it is not referenced by any application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Project to manage ArgoCD configuration
+
+  # roles:
+  # - name: full-access
+  #   description: Privileges to <environment> resources
+  #   policies:
+  #   - p, proj:test-argocd-admin:full-access, applications, *, test-argocd-admin/*, allow
+  #   - p, proj:test-argocd-admin:full-access, clusters, *, test-argocd-admin/*, allow
+  #   - p, proj:test-argocd-admin:full-access, repositories, *, test-argocd-admin/*, allow
+  #   groups: 
+  #   - example-group@client.com
+  # Allow manifests to deploy from any Git repos
+  sourceRepos:
+  - '*'
+  # Only permit applications to deploy to the guestbook namespace in the same cluster
+  destinations:
+  - namespace: '*'
+    server: https://kubernetes.default.svc
+  # Deny all cluster-scoped resources from being created, except for this list
+  clusterResourceWhitelist: []
+       
+  namespaceResourceWhitelist:
+  - group: 'argoproj.io'
+    kind: Application
+  - group: 'argoproj.io'
+    kind: AppProject
+  - group: 'argoproj.io'
+    kind: ApplicationSet
+
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist: []

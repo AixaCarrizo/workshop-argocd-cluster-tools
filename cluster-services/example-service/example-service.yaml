@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: example-service
+spec:
+  project: test-dev
+  destination:
+    namespace: argocd
+    name: test-dev
+  sources:
+  - repoURL: https://kedacore.github.io/charts
+    targetRevision: 2.17.2
+    helm:
+      valueFiles:
+      - $values/cluster-services/dev/example-service/values/values.yaml
+    chart: keda
+  - repoURL: https://github.com/AixaCarrizo/workshop-argocd-cluster-tools.git
+    targetRevision: main
+    ref: values

@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-core-tools
+  namespace: argocd
+spec:
+  destination:
+    namespace: 'argocd'
+    name: 'in-cluster'
+  source:
+    path: cluster-services/
+    repoURL: https://github.com/AixaCarrizo/workshop-argocd-cluster-tools.git
+    targetRevision: main
+    directory:
+      recurse: true
+      exclude: '{*/values.yaml,*/,manifests/*}'
+  syncPolicy: {}
+  project: test-argocd-admin
+  # syncPolicy:
+  #   automated:
+  #     selfHeal: false
+  #   syncOptions:
+  #     - Validate=false
+  #     - CreateNamespace=true
+  #     - ApplyOutOfSyncOnly=true
