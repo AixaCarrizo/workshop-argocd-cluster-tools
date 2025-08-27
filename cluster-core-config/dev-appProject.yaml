@@ -32,7 +32,7 @@ spec:
   # Only permit applications to deploy to the guestbook namespace in the same cluster
   destinations:
   - namespace: '*'
-    server: test-dev
+    name: 'test-dev'
   # Deny all cluster-scoped resources from being created, except for this list
   clusterResourceWhitelist:
   - group: ''
